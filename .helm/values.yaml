@@ -1,0 +1,49 @@
+postgresql:
+  postgresqlDatabase: gtd
+
+go-app:
+  nameOverride: django-todo
+  fullnameOverride: django-todo
+
+  ports:
+    http:
+      port: 8000
+      protocol: TCP
+
+  startupProbe:
+    httpGet:
+      path: /
+      port: http
+      scheme: HTTP
+
+  livenessProbe:
+    httpGet:
+      path: /
+      port: http
+      scheme: HTTP
+
+  readinessProbe:
+    httpGet:
+      path: /
+      port: http
+      scheme: HTTP
+
+  env:
+    raw:
+      DATABASE_NAME: gtd
+      DATABASE_HOST: django-todo-postgresql
+      DATABASE_PORT: 5432
+
+  jobs:
+    - name: migrations
+      annotations:
+        "helm.sh/hook": pre-install,pre-upgrade
+        "helm.sh/hook-delete-policy": hook-succeeded
+      activeDeadlineSeconds: 180
+      command:
+        - bash
+        - -c
+        - |
+          while ! </dev/tcp/$DATABASE_HOST/$DATABASE_PORT; do sleep 1; done;
+          python manage.py migrate
+          python manage.py hopper 2>&1 || true

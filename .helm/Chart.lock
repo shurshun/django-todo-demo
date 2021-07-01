@@ -1,0 +1,9 @@
+dependencies:
+- name: go-app
+  repository: https://charts.k8s-prod.ru
+  version: 1.0.24
+- name: postgresql
+  repository: https://charts.bitnami.com/bitnami
+  version: 10.5.1
+digest: sha256:45ae89158490356bef5a065cc2db40e98bdf4e10d4f5b938f77b09cd0abcba17
+generated: "2021-07-01T14:42:14.769429+03:00"

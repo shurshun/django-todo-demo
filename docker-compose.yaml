@@ -1,0 +1,39 @@
+version: '3'
+services:
+  db:
+    image: postgres
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=gtd
+      - POSTGRES_USER=gtd
+      - POSTGRES_PASSWORD=gtd
+  app:
+    build:
+      context: gtd
+    restart: always
+    ports:
+      - 8000:8000
+    command:
+      - sh
+      - -c
+      - |
+        python manage.py migrate
+        python manage.py hopper > /dev/null 2>&1 || true
+        exec python manage.py runserver 0:8000
+    environment:
+      - SECRET_KEY=lksdf98wrhkjs88dsf8-324ksdm
+      - DATABASE_USER=gtd
+      - DATABASE_PASSWORD=gtd
+      - DATABASE_NAME=gtd
+      - DATABASE_HOST=db
+      - DATABASE_PORT=5432
+    depends_on:
+      - db
+
+networks:
+  default:
+    name: coins_ph
+
+volumes:
+  db-data:
